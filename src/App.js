@@ -39,6 +39,11 @@ class AccessControlled extends Component {
   }
 }
 
+import * as actionCreators from './store/actions';
+
+let web3 = null;
+
+
 class App extends Component {
   state = {
     activated: false,
@@ -50,11 +55,24 @@ class App extends Component {
     });
   }
 
+  handleAuthenticate = ({ publicAddress, signature }) => {
+    this.props.onSignIn(publicAddress, signature);
+    // fetch(`${process.env.REACT_APP_BACKEND_URL}/auth`, {
+    //   body: JSON.stringify({ publicAddress, signature }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   method: 'POST'
+    // }).then(response => response.json());
+  }
+
+
+
   render() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <AccessButton onClick={this.activate}>Access</AccessButton>
-        <AccessControlled tokens={5} activated={this.state.activated}>
+        <AccessButton onClick={this.props.onSign}>Access</AccessButton>
+        <AccessControlled tokens={5}>
           <div style={{ color: '#000' }}>Hello World</div>
         </AccessControlled>
       </div>
@@ -70,7 +88,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSignIn: (signature) => dispatch({type: 'SIGN', signature: signature})
+    onSign: (publicAddress, nonce) => dispatch(actionCreators.sign())
   };
 }
 
