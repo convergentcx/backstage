@@ -1,19 +1,36 @@
 import React, { Component } from 'react';
 import './App.css';
-import web3 from 'web3';
-
+import Web3 from 'web3';
 import { connect } from 'react-redux'
+
+import * as actionCreators from './store/actions';
+
+let web3 = null;
+
 
 class App extends Component {
   componentDidUpdate() {
     console.log('authorized: ', this.props.authorized);
   }
 
+  handleAuthenticate = ({ publicAddress, signature }) => {
+    this.props.onSignIn(publicAddress, signature);
+    // fetch(`${process.env.REACT_APP_BACKEND_URL}/auth`, {
+    //   body: JSON.stringify({ publicAddress, signature }),
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   method: 'POST'
+    // }).then(response => response.json());
+  }
+
+
+
   render() {
     return (
       <div className="App">
         <header className="App-header">
-        <button onClick={this.props.onSignIn}>Sign in</button>
+          <button onClick={this.props.onSign}> Sign MetaMask </button>
         </header>
       </div>
     );
@@ -28,7 +45,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSignIn: (signature) => dispatch({type: 'SIGN', signature: signature})
+    onSign: (publicAddress, nonce) => dispatch(actionCreators.sign())
   };
 }
 
