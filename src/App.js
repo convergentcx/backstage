@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import styled from 'styled-components';
+import web3 from 'web3';
 
 const AccessButton = styled.button`
   pointer: cursor;
@@ -60,4 +62,16 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    authorized: state.auth
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onSignIn: (signature) => dispatch({type: 'SIGN', signature: signature})
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
