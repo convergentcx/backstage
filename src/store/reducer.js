@@ -1,4 +1,4 @@
-import web3 from 'web3';
+import * as actionTypes from './actions/actionTypes';
 
 const initialState = {
 	address: null,
@@ -7,28 +7,19 @@ const initialState = {
 };
 
 const reducer = (state = initialState, action) => {
-	if (action.type === 'SIGN') {
-		console.log('Redux::sign')
-		return {...state, auth: !state.auth};
-	}
-	// if (action.type === 'WEB3') {
-	// 	console.log('Redux::web3')
-	// 	let provider;
-	// 	if (typeof window.ethereum !== 'undefined'
-	// 		|| (typeof window.web3 !== 'undefined')) {
-	// 		// Already has web3!
-	// 		console.log('Backstage Web3 Enabled');
-	// 		// Web3 browser user detected. You can now use the provider.
-	// 		provider = window['ethereum'] || window.web3.currentProvider
-	// 	} else {
-			
-	// 	}
-
-	// 	// const w3 = 
-	// 	return {...state, web3: w3}
-	// }
-
-	return state;
+	switch (action.type) {
+    case actionTypes.SET_ACCOUNT:
+      console.log('Redux::set account');
+      return {...state, address: action.address}
+    case actionTypes.SIGN:
+		  console.log('Redux::sign')
+      return {...state, auth: true};
+    case actionTypes.TURN_ON_WEB3:
+      console.log('Redux::Turn on Web3');
+      return {...state, web3: action.web3};
+    default:
+      return state;
+  }
 }
 
 export default reducer;
