@@ -26,6 +26,9 @@ exports.getUser = (req, res, next) => {
         });
 }
 
+exports.hello = () => console.log('hi')
+
+
 exports.postUser = (req, res, next) => {
     const publicAddress = req.params.publicAddress;
     const user = new User({
