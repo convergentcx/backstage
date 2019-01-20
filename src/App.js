@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
 import * as actionCreators from './store/actions';
@@ -90,6 +90,10 @@ class AccessControlled extends Component {
     isActivated: false,
   }
 
+  componentDidMount() {
+    this.props.setInput(this.props.match.params.economy);
+  }
+
   render() {
     const { activated } = this.props;
 
@@ -116,9 +120,15 @@ class AccessControlled extends Component {
   }
 }
 
+const AcWithRouter = withRouter(AccessControlled);
+
 class App extends Component {
   state = {
-    the_input: '0x25C4A712a6d478CC20F79970cE4485a1C064f598',
+    the_input: '',
+  }
+  
+  setInput = (economyAddress) => {
+    this.setState({the_input: economyAddress})
   }
 
   handleChange = event => {
@@ -140,6 +150,7 @@ class App extends Component {
           <input 
             type="text"
             name="the_input"
+            value={this.state.the_input}
             onChange={this.handleChange}
             style={{ background: '#FFF', paddingLeft: '8px', color: '#000', border: 'none', width: '80%', height: '30px' }}
           />
@@ -159,7 +170,7 @@ class App extends Component {
         <div style={{ display: 'flex', marginLeft: '40%', width: '60%', background: '#f3f3f3', minHeight: '100%', flexDirection: 'column', alignItems: 'center' }}>
           <Switch>
             <Route path='/:economy' render={() => (
-              <AccessControlled tokens={5} address={this.state.economyAddress} onSign={that.props.onSign} activated={that.props.authorized}/>
+              <AcWithRouter tokens={5} address={this.state.economyAddress} onSign={() => that.props.onSign(this.state.the_input)} activated={that.props.authorized} setInput={this.setInput}/>
             )}/>
           </Switch>
         </div>
@@ -176,8 +187,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSign: () => dispatch(actionCreators.sign())
+    onSign: (economyAddress) => dispatch(actionCreators.sign(economyAddress))
   };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

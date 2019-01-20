@@ -1,23 +1,49 @@
 import * as actionTypes from './actionTypes';
 import Web3 from 'web3';
 
+
+
 export const setAuthTrue = () => {
 	return {
 		type: actionTypes.SIGN,
 	}
 }
 
-const handleSignMessage = async ({ publicAddress, nonce, state }) => {
+
+const handleSignMessage = async ({ publicAddress, nonce, web3 }) => {
 	let signature;
 	try {
-		signature = await state.web3.eth.personal.sign(
-			nonce,
-			publicAddress
+		signature = await web3.eth.personal.sign(
+			web3.utils.fromUtf8(`I am signing my one-time nonce: ${nonce}`),
+			publicAddress,
 		);
 	} catch (err) {
 		console.error(err);
 	}
-	return signature;
+	return ({ signature });
+}
+
+const handleSignup = async (publicAddress) => {
+	console.log('signing up')
+	const response = await fetch('http://localhost:3001/users/' + publicAddress, {
+		method: 'POST',
+	})
+	if (response.status !== 200 && response.status !== 201) {
+		throw new Error('Creating or editing a post failed!');
+	}
+	return response.json()
+}
+
+const handleAuthenticate = async ({ publicAddress, signature, address }) => {
+	const response = await fetch(`http://localhost:3001/auth`, {
+		body: JSON.stringify({ publicAddress, signature, address }),
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		method: 'POST'
+	})
+	const token = await response.json();
+	console.log(token);
 }
 
 const setAccount = (account) => {
@@ -64,20 +90,6 @@ const turnOnWeb3 = () => {
 	}
 }
 
-const verification = (data, signature, state) => {
-	return state.address === recoverAddress(data, signature, state);
-}
-
-const stdWeb3 = () => {
-  const w3 = new Web3(new Web3.providers.HttpProvider('https://rinkeby.infura.io'));
-  return w3;
-}
-
-const recoverAddress = (data, sig, state) => {
-	const res = state.web3.eth.accounts.recover(data, sig);
-	return res;
-}
-
 const pollForWeb3 = (getState) => {
 	return new Promise((resolve) => {
 		const { web3 } = getState();
@@ -90,14 +102,13 @@ const pollForWeb3 = (getState) => {
 	})
 }
 
-export const sign = () => {
+export const sign = (economyAddress) => {
 	return async (dispatch, getState) => {
 		let state = getState();
 		if (!state.web3) {
 			const enabled = await dispatch(turnOnWeb3());
 			console.log('Enabled ', enabled)
 		}
-		const data = Web3.utils.toHex('Hello World');
 
 		await pollForWeb3(getState);
 
@@ -107,25 +118,28 @@ export const sign = () => {
 		if (state.web3) {
 			// Check for balance and prompt to buy right away.
 			// const bal = await state.web3.eth
-			const signature = await handleSignMessage(
+			const publicAddress = state.address;
+			const response = await fetch('http://localhost:3001/users/' + publicAddress)
+			const resData = await response.json();
+			const user = resData.user ? resData.user : await handleSignup(publicAddress);
+			console.log(user);
+			const { signature } = await handleSignMessage(
 				{
-					publicAddress: state.address,
-					nonce: data,
-					state,
+					publicAddress: publicAddress,
+					nonce: user.nonce,
+					web3: state.web3
 				}
 			);
 
-			if (signature === null) {
-				console.log('User denied signing the message');
-			}
-			
-			// Verify steps on signature
-			const verified = verification(data, signature, state);
-			if (verified) {
-				dispatch(setAuthTrue());
-			} else {
-				console.error('Verification failed');
-			}
+			const authStatus = await handleAuthenticate(
+				{
+					publicAddress,
+					signature,
+					address: economyAddress
+				}
+			)
+			dispatch(setAuthTrue());
+
 		}
 	}
 }
