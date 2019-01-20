@@ -9,7 +9,6 @@ export const setAuthTrue = () => {
 	}
 }
 
-
 const handleSignMessage = async ({ publicAddress, nonce, web3 }) => {
 	let signature;
 	try {
@@ -43,7 +42,11 @@ const handleAuthenticate = async ({ publicAddress, signature, address }) => {
 		method: 'POST'
 	})
 	const token = await response.json();
-	console.log(token);
+	// console.log(token)
+	if (token.error) {
+		return false;
+	}
+	return true;
 }
 
 const setAccount = (account) => {
@@ -57,6 +60,13 @@ const setWeb3 = web3 => {
 	return {
 		type: actionTypes.TURN_ON_WEB3,
 		web3,
+	}
+}
+
+const verificationFailed = () => {
+	return {
+		type: actionTypes.VERIFICATION_FAILED,
+		verificationFailed: true,
 	}
 }
 
@@ -102,6 +112,24 @@ const pollForWeb3 = (getState) => {
 	})
 }
 
+export const buy = () => {
+	return async (dispatch, getState) => {
+		let state = getState();
+		if (!state.web3) {
+			const enabled = await dispatch(turnOnWeb3());
+			console.log('Enabled ', enabled)
+		}
+
+		await pollForWeb3(getState);
+
+		state = getState();
+
+		if (state.web3) {
+			
+		}
+	}
+}
+
 export const sign = (economyAddress) => {
 	return async (dispatch, getState) => {
 		let state = getState();
@@ -122,7 +150,7 @@ export const sign = (economyAddress) => {
 			const response = await fetch('http://ec2-3-122-54-228.eu-central-1.compute.amazonaws.com:59558/users/' + publicAddress)
 			const resData = await response.json();
 			const user = resData.user ? resData.user : await handleSignup(publicAddress);
-			console.log(user);
+			// console.log(user);
 			const { signature } = await handleSignMessage(
 				{
 					publicAddress: publicAddress,
@@ -138,8 +166,12 @@ export const sign = (economyAddress) => {
 					address: economyAddress
 				}
 			)
-			dispatch(setAuthTrue());
 
+			if (!authStatus) {
+				dispatch(verificationFailed());
+			} else {
+				dispatch(setAuthTrue());
+			}
 		}
 	}
 }

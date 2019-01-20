@@ -4,6 +4,7 @@ const initialState = {
 	address: null,
 	auth: false,
 	web3: null,
+  verificationFailed: null,
 };
 
 const reducer = (state = initialState, action) => {
@@ -17,6 +18,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.TURN_ON_WEB3:
       console.log('Redux::Turn on Web3');
       return {...state, web3: action.web3};
+    case actionTypes.VERIFICATION_FAILED:
+      console.log('Redux::verification failed');
+      return {...state, verificationFailed: action.verificationFailed};
     default:
       return state;
   }

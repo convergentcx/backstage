@@ -115,6 +115,11 @@ class AccessControlled extends Component {
     this.props.setInput(this.props.match.params.economy);
   }
 
+  buyTokens = () => {
+
+    this.props.onSign();
+  }
+
   render() {
     const { activated } = this.props;
 
@@ -131,11 +136,14 @@ class AccessControlled extends Component {
           </div>
           :
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', background: '' }}>
-            <AccessButton onClick={this.props.onSign}>Access<br/>With Convergent</AccessButton>
-            {/* <NeedToBuy>
-              You don't own enough tokens!<br/>
-              Click here to purchase
-            </NeedToBuy> */}
+            { this.props.verificationFailed ?
+              <NeedToBuy onClick={this.buyTokens}>
+                You don't own enough tokens!<br/>
+                Click here to purchase
+              </NeedToBuy>
+              :
+              <AccessButton onClick={this.props.onSign}>Access<br/>With Convergent</AccessButton>
+            }
           </div>
         }
       </div>
@@ -183,7 +191,7 @@ class App extends Component {
           <h5>Your embed code:</h5>
           <div style={{ display: 'flex', flexFlow: 'row', overflowX: 'scroll', width: '90%', height: '88px', background: '#f9f9f9', padding: '8px', color: '#000', borderRadius: '' }}>
             <code id="embed">
-              { `<iframe src="https://backstage.convergent.cx/${this.state.the_input}" width="500" height="300"></iframe>` }
+              { `<iframe src="https://backstage.convergent.cx/#/${this.state.the_input}" width="500" height="300"></iframe>` }
             </code>
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', width: '80%' }}>
@@ -202,7 +210,15 @@ class App extends Component {
         <div style={{ display: 'flex', marginLeft: '40%', width: '60%', background: '#f3f3f3', minHeight: '100%', flexDirection: 'column', alignItems: 'center' }}>
           <Switch>
             <Route path='/:economy' render={() => (
-              <AcWithRouter tokens={5} address={this.state.economyAddress} onSign={() => that.props.onSign(this.state.the_input)} activated={that.props.authorized} setInput={this.setInput}/>
+              <AcWithRouter 
+                tokens={5} 
+                verificationFailed={this.props.verificationFailed} 
+                address={this.state.economyAddress} 
+                onSign={() => that.props.onSign(this.state.the_input)} 
+                activated={that.props.authorized} 
+                setInput={this.setInput}
+                tryBuy={() => that.props.tryBuy()}
+              />
             )}/>
           </Switch>
         </div>
@@ -214,12 +230,14 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     authorized: state.auth,
+    verificationFailed: state.verificationFailed,
   };
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSign: (economyAddress) => dispatch(actionCreators.sign(economyAddress))
+    onSign: (economyAddress) => dispatch(actionCreators.sign(economyAddress)),
+    tryBuy: () => dispatch(actionCreators.buy()),
   };
 }
 
