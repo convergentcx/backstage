@@ -125,6 +125,15 @@ export const buy = (personalEconomyAddr) => {
 
 		if (state.web3) {
 			const personalEconomy = await state.web3.eth.Contract(PersonalEconomyABI, personalEconomyAddr);
+			const res = await personalEconomy.methods.mint(state.web3.utils.toWei('1', 'ether'), {
+				from: state.address,
+				value: state.web3.utils.toWei('1', 'ether'),
+			});
+			if (!!res.status) {
+				dispatch(sign(personalEconomy.address));
+			} else {
+				console.error('you failed')
+			}
 		}
 	}
 }

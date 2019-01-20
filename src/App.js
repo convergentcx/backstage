@@ -91,9 +91,7 @@ const MyLink = styled(Link)`
 `;
 
 const Backstage = styled.h1`
-  background: -webkit-linear-gradient(#411999, #0044FF);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #2424D0;
   margin-bottom: 0;
 `;
 
@@ -148,6 +146,12 @@ class App extends Component {
     the_input: '',
     width: 500,
     height: 300,
+  }
+
+  componentDidMount() {
+    if (this.props.history.location.pathname === '/') {
+      this.props.history.push('/preview');
+    }
   }
   
   setInput = (economyAddress) => {
