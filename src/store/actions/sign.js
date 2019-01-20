@@ -2,9 +2,10 @@ import * as actionTypes from './actionTypes';
 import Web3 from 'web3';
 import PersonalEconomyABI from '../../assets/PersonalEconomy.json';
 
-export const setAuthTrue = () => {
+export const setAuthTrue = (authToken) => {
 	return {
 		type: actionTypes.SIGN,
+		jwtToken: authToken
 	}
 }
 
@@ -40,12 +41,12 @@ const handleAuthenticate = async ({ publicAddress, signature, address }) => {
 		},
 		method: 'POST'
 	})
-	const token = await response.json();
+	const authStatus = await response.json();
 	// console.log(token)
-	if (token.error) {
+	if (authStatus.error) {
 		return false;
 	}
-	return true;
+	return authStatus.token;
 }
 
 const setAccount = (account) => {
@@ -167,7 +168,7 @@ export const sign = (economyAddress) => {
 				}
 			);
 
-			const authStatus = await handleAuthenticate(
+			const authToken = await handleAuthenticate(
 				{
 					publicAddress,
 					signature,
@@ -175,10 +176,10 @@ export const sign = (economyAddress) => {
 				}
 			)
 
-			if (!authStatus) {
+			if (!authToken) {
 				dispatch(verificationFailed());
 			} else {
-				dispatch(setAuthTrue());
+				dispatch(setAuthTrue(authToken));
 			}
 		}
 	}

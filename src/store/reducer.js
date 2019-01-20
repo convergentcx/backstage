@@ -13,8 +13,8 @@ const reducer = (state = initialState, action) => {
       console.log('Redux::set account');
       return {...state, address: action.address}
     case actionTypes.SIGN:
-		  console.log('Redux::sign')
-      return {...state, auth: true};
+		  console.log('Redux::sign', 'jwtToken: :', action.jwtToken)
+      return {...state, jwtToken: action.jwtToken, auth: true};
     case actionTypes.TURN_ON_WEB3:
       console.log('Redux::Turn on Web3');
       return {...state, web3: action.web3};
