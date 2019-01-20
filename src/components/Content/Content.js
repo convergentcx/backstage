@@ -10,13 +10,14 @@ class Content extends React.Component {
   }
 
   fetchData = async (economy) => {
-    const res = await fetch(`http://ec2-3-122-54-228.eu-central-1.compute.amazonaws.com:59558/content/${economy}`, {
+    const res = await fetch(`https://333829d5.ngrok.io/content/${economy}`, {
       headers: {
         Authorization: `Bearer ${this.props.jwtToken}`,
       }
     });
 
-    const links = res.json().content.map(content => (
+    const resJson = await res.json();
+    const links = resJson.content.map(content => (
       content.link
     ));
 
@@ -26,6 +27,7 @@ class Content extends React.Component {
   render() {
     const contentElements = this.state.contentLinks.map(contentLink => (
       <iframe
+        key={contentLink.toString()}
         title={contentLink.toString()}
         style={{marginBottom: '20px'}}
         src={contentLink}
