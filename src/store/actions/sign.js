@@ -1,7 +1,6 @@
 import * as actionTypes from './actionTypes';
 import Web3 from 'web3';
-
-
+import PersonalEconomyABI from '../../assets/PersonalEconomy.json';
 
 export const setAuthTrue = () => {
 	return {
@@ -24,7 +23,7 @@ const handleSignMessage = async ({ publicAddress, nonce, web3 }) => {
 
 const handleSignup = async (publicAddress) => {
 	console.log('signing up')
-	const response = await fetch('http://localhost:3001/users/' + publicAddress, {
+	const response = await fetch('http://ec2-3-122-54-228.eu-central-1.compute.amazonaws.com:59558/users/' + publicAddress, {
 		method: 'POST',
 	})
 	if (response.status !== 200 && response.status !== 201) {
@@ -34,7 +33,7 @@ const handleSignup = async (publicAddress) => {
 }
 
 const handleAuthenticate = async ({ publicAddress, signature, address }) => {
-	const response = await fetch(`http://localhost:3001/auth`, {
+	const response = await fetch(`http://ec2-3-122-54-228.eu-central-1.compute.amazonaws.com:59558/auth`, {
 		body: JSON.stringify({ publicAddress, signature, address }),
 		headers: {
 			'Content-Type': 'application/json'
@@ -112,7 +111,7 @@ const pollForWeb3 = (getState) => {
 	})
 }
 
-export const buy = () => {
+export const buy = (personalEconomyAddr) => {
 	return async (dispatch, getState) => {
 		let state = getState();
 		if (!state.web3) {
@@ -125,7 +124,7 @@ export const buy = () => {
 		state = getState();
 
 		if (state.web3) {
-			
+			const personalEconomy = await state.web3.eth.Contract(PersonalEconomyABI, personalEconomyAddr);
 		}
 	}
 }
@@ -147,7 +146,7 @@ export const sign = (economyAddress) => {
 			// Check for balance and prompt to buy right away.
 			// const bal = await state.web3.eth
 			const publicAddress = state.address;
-			const response = await fetch('http://localhost:3001/users/' + publicAddress)
+			const response = await fetch('http://ec2-3-122-54-228.eu-central-1.compute.amazonaws.com:59558/users/' + publicAddress)
 			const resData = await response.json();
 			const user = resData.user ? resData.user : await handleSignup(publicAddress);
 			// console.log(user);

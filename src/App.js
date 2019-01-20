@@ -116,7 +116,7 @@ class AccessControlled extends Component {
   }
 
   buyTokens = () => {
-
+    this.props.buyTokens(this.props.match.params.economy);
     this.props.onSign();
   }
 
@@ -124,7 +124,7 @@ class AccessControlled extends Component {
     const { activated } = this.props;
 
     return (
-      <div style={{ width: '100%', height: '100%' }}>
+      <div style={{ width: '100vw', height: '100vh', background: '' }}>
         {
           activated
           ?
@@ -137,7 +137,7 @@ class AccessControlled extends Component {
           :
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', background: '' }}>
             { this.props.verificationFailed ?
-              <NeedToBuy onClick={this.buyTokens}>
+              <NeedToBuy onClick={() => this.buyTokens}>
                 You don't own enough tokens!<br/>
                 Click here to purchase
               </NeedToBuy>
@@ -156,6 +156,8 @@ const AcWithRouter = withRouter(AccessControlled);
 class App extends Component {
   state = {
     the_input: '',
+    width: 500,
+    height: 300,
   }
   
   setInput = (economyAddress) => {
@@ -173,55 +175,77 @@ class App extends Component {
     const that = this;
     return (
       <div style={{ display: 'flex', flexDirection: 'row', padding: '', justifyContent: '', alignItems: '', minHeight: '100vh' }}>
-        <div style={{ display: 'flex', position: 'fixed', top: '0', flexDirection: 'column', alignItems: 'center', width: '40%', color: '#FFF', background: '#000', minHeight: '100%' }}>
-          <Backstage>
-            Backstage
-          </Backstage>
-          <h3>What is your economy address?</h3>
-          <input 
-            type="text"
-            name="the_input"
-            value={this.state.the_input}
-            onChange={this.handleChange}
-            style={{ background: '#FFF', paddingLeft: '8px', color: '#000', border: 'none', width: '80%', height: '30px' }}
-          />
-          <h5>Choose your dimensions:</h5>
-          Width: <DimensionInput/>
-          Height: <DimensionInput/>
-          <h5>Your embed code:</h5>
-          <div style={{ display: 'flex', flexFlow: 'row', overflowX: 'scroll', width: '90%', height: '88px', background: '#f9f9f9', padding: '8px', color: '#000', borderRadius: '' }}>
-            <code id="embed">
-              { `<iframe src="https://backstage.convergent.cx/#/${this.state.the_input}" width="500" height="300"></iframe>` }
-            </code>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'row', width: '80%' }}>
-            <CopyButton
-              onClick={() => navigator.clipboard.writeText(normalize(document.getElementById('embed').innerHTML))}
-            >
-              Click here to copy
-            </CopyButton>
-            <MyLink to={"/" + this.state.the_input} onClick={() => this.forceUpdate()}>
-              <PreviewButton>
-                Preview
-              </PreviewButton>
-            </MyLink>
-          </div>
-        </div>
-        <div style={{ display: 'flex', marginLeft: '40%', width: '60%', background: '#f3f3f3', minHeight: '100%', flexDirection: 'column', alignItems: 'center' }}>
-          <Switch>
-            <Route path='/:economy' render={() => (
-              <AcWithRouter 
-                tokens={5} 
-                verificationFailed={this.props.verificationFailed} 
-                address={this.state.economyAddress} 
-                onSign={() => that.props.onSign(this.state.the_input)} 
-                activated={that.props.authorized} 
-                setInput={this.setInput}
-                tryBuy={() => that.props.tryBuy()}
+        <Route path="/preview" render={() => (
+          <div>
+            <div style={{ display: 'flex', position: 'fixed', top: '0', flexDirection: 'column', alignItems: 'center', width: '40%', color: '#FFF', background: '#000', minHeight: '100%' }}>
+              <Backstage>
+                Backstage
+              </Backstage>
+              <h3>What is your economy address?</h3>
+              <input 
+                type="text"
+                name="the_input"
+                value={this.state.the_input}
+                onChange={this.handleChange}
+                style={{ background: '#FFF', paddingLeft: '8px', color: '#000', border: 'none', width: '80%', height: '30px' }}
               />
-            )}/>
-          </Switch>
+              <h5>Choose your dimensions:</h5>
+              Width: <DimensionInput
+                type="text"
+                name="width"
+                value={this.state.width}
+                onChange={this.handleChange}
+              />
+              Height: <DimensionInput
+                type="text"
+                name="height"
+                value={this.state.height}
+                onChange={this.handleChange}
+              />
+              <h5>Your embed code:</h5>
+              <div style={{ display: 'flex', flexFlow: 'row', overflowX: 'scroll', width: '90%', height: '88px', background: '#f9f9f9', padding: '8px', color: '#000', borderRadius: '' }}>
+                <code id="embed">
+                  { `<iframe src="https://backstage.convergent.cx/#/production/${this.state.the_input}" width="${this.state.width}" height="${this.state.height}"></iframe>` }
+                </code>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', width: '80%' }}>
+                <CopyButton
+                  onClick={() => navigator.clipboard.writeText(normalize(document.getElementById('embed').innerHTML))}
+                >
+                  Click here to copy
+                </CopyButton>
+                <MyLink to={"/preview/" + this.state.the_input} onClick={() => this.forceUpdate()}>
+                  <PreviewButton>
+                    Preview
+                  </PreviewButton>
+                </MyLink>
+              </div>
+            </div>
+            <div style={{ display: 'flex', marginLeft: '40%', width: '60%', background: '#f3f3f3', minHeight: '100%', flexDirection: 'column', alignItems: 'center' }}>
+              <Route path='/preview/:economy' render={() => (
+                <AcWithRouter 
+                  tokens={5} 
+                  verificationFailed={this.props.verificationFailed} 
+                  address={this.state.economyAddress} 
+                  onSign={() => that.props.onSign(this.state.the_input)} 
+                  activated={that.props.authorized} 
+                  setInput={this.setInput}
+                  tryBuy={(economyAddress) => that.props.tryBuy(economyAddress)}
+                />
+              )}/>
+            </div>
         </div>
+        )}/>
+        <Route path='/production/:economy' render={() => (
+          <AcWithRouter
+            tokens={5}
+            verificationFailed={this.props.verificationFailed}
+            onSign={() => that.props.onSign(this.state.the_input)} 
+            activated={that.props.authorized} 
+            setInput={this.setInput}
+            tryBuy={(economyAddress) => that.props.tryBuy(economyAddress)}
+            />
+        )}/>
       </div>
     );
   }
@@ -237,7 +261,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onSign: (economyAddress) => dispatch(actionCreators.sign(economyAddress)),
-    tryBuy: () => dispatch(actionCreators.buy()),
+    tryBuy: (economyAddress) => dispatch(actionCreators.buy(economyAddress)),
   };
 }
 
