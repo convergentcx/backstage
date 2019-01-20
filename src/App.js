@@ -15,7 +15,6 @@ import {
 const AccessButton = styled.button`
   pointer: cursor;
   border: solid;
-  border-size: 1px;
   border-color: #000;
   background: #2424D0;
   color: #FFF;
@@ -29,6 +28,30 @@ const AccessButton = styled.button`
     background: #0044FF;
     border-color: #232323;
   }
+`;
+
+const NeedToBuy = styled.button`
+  pointer: cursor;
+  border: none;
+  border-color: #000;
+  background: #000;
+  color: #FFF;
+  transition: 0.3s;
+  width: 240px;
+  height: 80px;
+  font-size: 0.8rem;
+  border-width: 3px 2px 3px 2px;
+  :hover {
+    color: #FFF;
+    background: #191970;
+    border-color: #232323;
+  }
+`;
+
+const DimensionInput = styled.input`
+  width: 28%;
+  background: #FFF;
+  color: #000;
 `;
 
 const CopyButton = styled.button`
@@ -79,11 +102,9 @@ const Backstage = styled.h1`
   margin-bottom: 0;
 `;
 
-const TheExclusiveZone = styled.h1`
-  background: -webkit-linear-gradient(#c1af00, #ffee49);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
+const normalize = (str) => (
+  str.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+);
 
 class AccessControlled extends Component {
   state = {
@@ -111,8 +132,10 @@ class AccessControlled extends Component {
           :
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', background: '' }}>
             <AccessButton onClick={this.props.onSign}>Access<br/>With Convergent</AccessButton>
-            {/* <button onClick={this.sign}>Sign</button> */}
-            {/* <button onClick={this.deploy}>Test Deploy</button> */}
+            {/* <NeedToBuy>
+              You don't own enough tokens!<br/>
+              Click here to purchase
+            </NeedToBuy> */}
           </div>
         }
       </div>
@@ -154,12 +177,21 @@ class App extends Component {
             onChange={this.handleChange}
             style={{ background: '#FFF', paddingLeft: '8px', color: '#000', border: 'none', width: '80%', height: '30px' }}
           />
+          <h5>Choose your dimensions:</h5>
+          Width: <DimensionInput/>
+          Height: <DimensionInput/>
           <h5>Your embed code:</h5>
-          <div style={{ width: '90%', height: '50vh', background: '#f9f9f9', padding: '8px', color: '#000', borderRadius: '10px' }}>
-            { `<iframe src="https://backstage.convergent.cx/${this.state.the_input}></iframe>` }
+          <div style={{ display: 'flex', flexFlow: 'row', overflowX: 'scroll', width: '90%', height: '88px', background: '#f9f9f9', padding: '8px', color: '#000', borderRadius: '' }}>
+            <code id="embed">
+              { `<iframe src="https://backstage.convergent.cx/${this.state.the_input}" width="500" height="300"></iframe>` }
+            </code>
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', width: '80%' }}>
-            <CopyButton>Click here to copy</CopyButton>
+            <CopyButton
+              onClick={() => navigator.clipboard.writeText(normalize(document.getElementById('embed').innerHTML))}
+            >
+              Click here to copy
+            </CopyButton>
             <MyLink to={"/" + this.state.the_input} onClick={() => this.forceUpdate()}>
               <PreviewButton>
                 Preview
