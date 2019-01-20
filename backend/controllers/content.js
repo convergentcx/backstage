@@ -2,8 +2,9 @@ const Content = require('../models/content');
 
 exports.postContent = (req, res, next) => {
     const economyAddress = req.params.economyAddress;
+    const link = req.body.link;
     const content = new Content({
-        link: "https://www.biography.com/.image/t_share/MTE1ODA0OTcxODExNDQwMTQx/vincent-van-gogh-9515695-3-402.jpg", economy: economyAddress
+        link: link, economy: economyAddress
     })
     return content.save()
         .then(result => {

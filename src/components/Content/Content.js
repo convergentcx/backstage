@@ -32,7 +32,16 @@ class Content extends React.Component {
     render() {
         const contentElements = this.state.contentLinks.map(contentLink => {
             return (
-                <img key={contentLink} src={contentLink} style={{ width: '300px', height: '200px', paddingBottom: '16px' }} alt="img" />
+                // <img key={contentLink} src={contentLink} style={{ width: '300px', height: '200px', paddingBottom: '16px' }} alt="img" />
+                <iframe
+                style={{marginBottom: '20px'}}
+                src={contentLink}
+                width="640"
+                height="360"
+                frameBorder="0"
+                webkitallowfullscreen="true"
+                mozallowfullscreen="true">
+            </iframe>
             )
         })
 
