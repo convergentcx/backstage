@@ -123,7 +123,7 @@ class AccessControlled extends Component {
         {
           activated
           ?
-          <Content />
+          <Content jwtToken={this.props.jwtToken} economy={this.props.address}/>
           :
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', background: '' }}>
             { this.props.verificationFailed ?
@@ -215,8 +215,9 @@ class App extends Component {
               <Route path='/preview/:economy' render={() => (
                 <AcWithRouter 
                   tokens={5} 
-                  verificationFailed={this.props.verificationFailed} 
-                  address={this.state.economyAddress} 
+                  verificationFailed={this.props.verificationFailed}
+                  jwtToken={this.props.jwtToken} 
+                  address={this.state.the_input} 
                   onSign={() => that.props.onSign(this.state.the_input)} 
                   activated={that.props.authorized} 
                   setInput={this.setInput}
@@ -245,6 +246,7 @@ const mapStateToProps = state => {
   return {
     authorized: state.auth,
     verificationFailed: state.verificationFailed,
+    jwtToken: state.jwtToken
   };
 }
 
