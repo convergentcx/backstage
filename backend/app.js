@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const userRoutes = require('./routes/users');
+const contentRoutes = require('./routes/content');
 
 app = express();
 
@@ -16,6 +17,8 @@ app.use((req, res, next) => {
 });
 
 app.use(userRoutes);
+app.use(contentRoutes);
+
 
 
 mongoose.connect('mongodb+srv://achill:w8BG6xR351pqX6DC@cluster0-xfiey.mongodb.net/tokens')
