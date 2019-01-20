@@ -1,8 +1,5 @@
 import React from 'react';
 
-let images;
-
-
 class Content extends React.Component {
 
     state = {
@@ -11,13 +8,12 @@ class Content extends React.Component {
 
     componentDidMount() {
         this.fetchData(this.props.economy)
-        console.log(this.props.jwtToken)
     }
 
     fetchData = (economy) => {
         fetch('http://localhost:3001/content/' + economy, {
             headers: {
-                Authorization: 'Bearer ' + this.props.token
+                Authorization: 'Bearer ' + this.props.jwtToken
             }
         })
             .then(res => {
