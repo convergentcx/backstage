@@ -10,5 +10,4 @@ router.get('/content/:economyAddress', isAuth, contentController.getContent);
 // POST new content
 router.post('/content/:economyAddress', contentController.postContent);
 
-
 module.exports = router;

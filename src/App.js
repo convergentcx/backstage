@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { Link, Route, Switch, withRouter } from 'react-router-dom';
+import { Link, Route, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 
 import * as actionCreators from './store/actions';
@@ -109,8 +109,8 @@ class AccessControlled extends Component {
   }
 
   buyTokens = () => {
-    this.props.buyTokens(this.props.match.params.economy);
-    this.props.onSign();
+    // console.log(this.props.match.params.economy);
+    this.props.tryBuy(this.props.match.params.economy);
   }
 
   render() {
@@ -121,11 +121,11 @@ class AccessControlled extends Component {
         {
           activated
           ?
-          <Content jwtToken={this.props.jwtToken} economy={this.props.address}/>
+          <Content jwtToken={this.props.jwtToken} economy={this.props.match.params.economy}/>
           :
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%', background: '' }}>
             { this.props.verificationFailed ?
-              <NeedToBuy onClick={() => this.buyTokens}>
+              <NeedToBuy onClick={this.buyTokens}>
                 You don't own enough tokens!<br/>
                 Click here to purchase
               </NeedToBuy>
@@ -235,6 +235,7 @@ class App extends Component {
           <AcWithRouter
             tokens={5}
             verificationFailed={this.props.verificationFailed}
+            jwtToken={this.props.jwtToken} 
             onSign={() => that.props.onSign(this.state.the_input)} 
             activated={that.props.authorized} 
             setInput={this.setInput}

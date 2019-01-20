@@ -70,6 +70,13 @@ const verificationFailed = () => {
 	}
 }
 
+const clearVerification = () => {
+	return {
+		type: actionTypes.VERIFICATION_FAILED,
+		verificationFailed: false,
+	}
+}
+
 const turnOnWeb3 = () => {
 	return async (dispatch) => {
 		if (window.ethereum) {
@@ -125,16 +132,19 @@ export const buy = (personalEconomyAddr) => {
 		state = getState();
 
 		if (state.web3) {
-			const personalEconomy = await state.web3.eth.Contract(PersonalEconomyABI, personalEconomyAddr);
-			const res = await personalEconomy.methods.mint(state.web3.utils.toWei('1', 'ether'), {
-				from: state.address,
-				value: state.web3.utils.toWei('1', 'ether'),
-			});
-			if (!!res.status) {
-				dispatch(sign(personalEconomy.address));
-			} else {
-				console.error('you failed')
-			}
+			try {
+				const personalEconomy = await new state.web3.eth.Contract(PersonalEconomyABI, personalEconomyAddr);
+				console.log(personalEconomy)
+				const res = await personalEconomy.methods.mint(state.web3.utils.toWei('1', 'ether')).send({
+					from: state.address,
+					value: state.web3.utils.toWei('1', 'ether'),
+				});
+				if (!!res.status) {
+					dispatch(sign(personalEconomy.address));
+				} else {
+					console.error('you failed')
+				}
+			} catch (e) { console.error('ERROR!!!!', e); }
 		}
 	}
 }
@@ -179,6 +189,9 @@ export const sign = (economyAddress) => {
 			if (!authToken) {
 				dispatch(verificationFailed());
 			} else {
+				if (state.verificationFailed) {
+					dispatch(clearVerification());
+				}
 				dispatch(setAuthTrue(authToken));
 			}
 		}

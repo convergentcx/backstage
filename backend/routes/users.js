@@ -16,5 +16,4 @@ router.post('/users/:publicAddress', usersController.postUser);
 // authorize + authenticate user
 router.post('/auth', usersController.authUser);
 
-
 module.exports = router;
