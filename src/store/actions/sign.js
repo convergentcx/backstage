@@ -105,6 +105,8 @@ export const sign = () => {
 		state = getState();
 
 		if (state.web3) {
+			// Check for balance and prompt to buy right away.
+			// const bal = await state.web3.eth
 			const signature = await handleSignMessage(
 				{
 					publicAddress: state.address,
