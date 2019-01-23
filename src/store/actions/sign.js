@@ -24,7 +24,7 @@ const handleSignMessage = async ({ publicAddress, nonce, web3 }) => {
 
 const handleSignup = async (publicAddress) => {
 	console.log('signing up')
-	const response = await fetch('https://333829d5.ngrok.io/users/' + publicAddress, {
+	const response = await fetch('http://localhost:3002/users/' + publicAddress, {
 		method: 'POST',
 	})
 	if (response.status !== 200 && response.status !== 201) {
@@ -34,7 +34,7 @@ const handleSignup = async (publicAddress) => {
 }
 
 const handleAuthenticate = async ({ publicAddress, signature, address }) => {
-	const response = await fetch(`https://333829d5.ngrok.io/auth`, {
+	const response = await fetch(`http://localhost:3002/auth`, {
 		body: JSON.stringify({ publicAddress, signature, address }),
 		headers: {
 			'Content-Type': 'application/json'
@@ -166,7 +166,7 @@ export const sign = (economyAddress) => {
 			// Check for balance and prompt to buy right away.
 			// const bal = await state.web3.eth
 			const publicAddress = state.address;
-			const response = await fetch('https://333829d5.ngrok.io/users/' + publicAddress)
+			const response = await fetch('http://localhost:3002/users/' + publicAddress)
 			const resData = await response.json();
 			const user = resData.user ? resData.user : await handleSignup(publicAddress);
 			// console.log(user);

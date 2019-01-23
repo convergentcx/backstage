@@ -10,7 +10,7 @@ class Content extends React.Component {
   }
 
   fetchData = async (economy) => {
-    const res = await fetch(`https://333829d5.ngrok.io/content/${economy}`, {
+    const res = await fetch(`http://localhost:3002/content/${economy}`, {
       headers: {
         Authorization: `Bearer ${this.props.jwtToken}`,
       }
