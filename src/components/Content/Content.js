@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 class Content extends React.Component {
   state = {
@@ -10,14 +11,11 @@ class Content extends React.Component {
   }
 
   fetchData = async (economy) => {
-    const res = await fetch(`http://localhost:3002/content/${economy}`, {
-      headers: {
-        Authorization: `Bearer ${this.props.jwtToken}`,
-      }
-    });
 
-    const resJson = await res.json();
-    const links = resJson.content.map(content => (
+    const res = await axios.get(`http://localhost:3002/content/${economy}`, { 'headers': { 'Authorization': `Bearer ${this.props.jwtToken}` }})
+
+    const links = res.data.content.map(content => (
+
       content.link
     ));
 
@@ -27,6 +25,7 @@ class Content extends React.Component {
   render() {
     const contentElements = this.state.contentLinks.map(contentLink => (
       <iframe
+        key={contentLink}
         key={contentLink.toString()}
         title={contentLink.toString()}
         style={{marginBottom: '20px'}}

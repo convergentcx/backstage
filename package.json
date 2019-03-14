@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@types/web3": "^1.0.14",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "eth-sig-util": "^2.1.0",
     "ethereumjs-util": "^6.0.0",
