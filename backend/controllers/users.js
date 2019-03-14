@@ -1,7 +1,6 @@
 const Web3 = require("web3");
 const economyAbi = require("../contracts/PersonalEconomy.json");
 
-
 const User = require('../models/user');
 const ethUtil = require('ethereumjs-util');
 const sigUtil = require('eth-sig-util');

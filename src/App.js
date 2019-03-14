@@ -47,6 +47,7 @@ const DimensionInput = styled.input`
   width: 28%;
   background: #FFF;
   color: #000;
+  paddingLeft: 8px;
 `;
 
 const CopyButton = styled.button`

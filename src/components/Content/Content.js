@@ -15,6 +15,7 @@ class Content extends React.Component {
     const res = await axios.get(`http://localhost:3002/content/${economy}`, { 'headers': { 'Authorization': `Bearer ${this.props.jwtToken}` }})
 
     const links = res.data.content.map(content => (
+
       content.link
     ));
 
@@ -25,6 +26,7 @@ class Content extends React.Component {
     const contentElements = this.state.contentLinks.map(contentLink => (
       <iframe
         key={contentLink}
+        key={contentLink.toString()}
         title={contentLink.toString()}
         style={{marginBottom: '20px'}}
         src={contentLink}
@@ -37,7 +39,7 @@ class Content extends React.Component {
     ));
 
     return (
-      <div style={{ background: '#f3f3f3', display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%', alignItems: 'center', height: '100%', marginTop: '18px' }}>
+      <div style={{ background: '#f3f3f3', display: 'flex', flexFlow: 'row wrap', justifyContent: 'center', width: '100%', alignItems: 'center', height: '100%', marginTop: '18px' }}>
         {contentElements}
       </div>
     );
