@@ -10,6 +10,7 @@
 
 # production
 /build
+Backstage.pem
 
 # misc
 .DS_Store

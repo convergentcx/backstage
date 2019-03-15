@@ -12,7 +12,7 @@ class Content extends React.Component {
 
   fetchData = async (economy) => {
 
-    const res = await axios.get(`http://localhost:3002/content/${economy}`, { 'headers': { 'Authorization': `Bearer ${this.props.jwtToken}` }})
+    const res = await axios.get(`http://ec2-18-215-237-55.compute-1.amazonaws.com:3002/content/${economy}`, { 'headers': { 'Authorization': `Bearer ${this.props.jwtToken}` }})
 
     const links = res.data.content.map(content => (
 
