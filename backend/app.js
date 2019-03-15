@@ -23,6 +23,6 @@ app.use(contentRoutes);
 
 mongoose.connect('mongodb+srv://achill:w8BG6xR351pqX6DC@cluster0-xfiey.mongodb.net/tokens')
 .then(_ => {
-  app.listen(3002);
+  app.listen(80);
 })
 .catch(console.error);
